@@ -1,0 +1,11 @@
+# Node
+node_modules
+.npmrc
+test.js
+package-lock.json
+
+# Deno
+deno.lock
+
+# Generic
+test.js
