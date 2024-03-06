@@ -14,5 +14,5 @@ Deno.test("Current product is Deno (enum)", () => {
   assertEquals(Product.Deno, CurrentProduct);
 });
 Deno.test("Current version contains a dot", () => {
-  assertEquals(true, CurrentVersion.includes("."));
+  assertEquals(true, CurrentVersion?.includes("."));
 });

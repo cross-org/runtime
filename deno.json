@@ -1,7 +1,7 @@
 {
   "name": "@cross/runtime",
   "version": "0.0.9",
-  "exports": "./mod.js",
+  "exports": "./mod.ts",
   "fmt": {
     "lineWidth": 200
   }

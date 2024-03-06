@@ -18,7 +18,7 @@ console.log(`Product: ${CurrentProduct}`);
 console.log(`Version: ${CurrentVersion}`);
 
 if (CurrentRuntime == Runtime.Deno) {
-    console.log("You're running Deno!");
+  console.log("You're running Deno!");
 }
 ```
 

@@ -55,7 +55,7 @@ export const Product = {
  * Dynamically returns the current runtime environment.
  * @returns {Runtimes} The detected runtime environment.
  */
-export function getCurrentRuntime() {
+export function getCurrentRuntime(): string {
   //@ts-ignore Runtime detection
   if (typeof Deno === "object") {
     return Runtime.Deno;
@@ -82,7 +82,7 @@ export function getCurrentRuntime() {
  * Determines the current browser and its version (if applicable).
  * @returns {Products}
  */
-export function getCurrentProduct() {
+export function getCurrentProduct(): string {
   const runtime = getCurrentRuntime();
   switch (runtime) {
     case Runtime.Deno:
@@ -115,7 +115,7 @@ export function getCurrentProduct() {
  * Determines the version of the current product/runtime
  * @returns {string} An object containing the detected version, or undefined if the product is not supported.
  */
-export function getCurrentVersion() {
+export function getCurrentVersion(): string | undefined {
   const product = getCurrentProduct();
   switch (product) {
     case Product.Deno:
@@ -143,14 +143,14 @@ export function getCurrentVersion() {
 /**
  * Static variable with the current runtime.
  */
-export const CurrentRuntime = getCurrentRuntime();
+export const CurrentRuntime: string = getCurrentRuntime();
 
 /**
  * Static variable with the current product.
  */
-export const CurrentProduct = getCurrentProduct();
+export const CurrentProduct: string = getCurrentProduct();
 
 /**
  * Static variable with the current product/runtime version.
  */
-export const CurrentVersion = getCurrentVersion();
+export const CurrentVersion: string | undefined = getCurrentVersion();
