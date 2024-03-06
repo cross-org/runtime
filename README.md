@@ -4,6 +4,8 @@
 
 This package provides a robust, cross runtime, way to determine the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection.
 
+Try ut out at [jsfiddle.net/ux87tLz4/6/](https://jsfiddle.net/ux87tLz4/6/)
+
 **Usage Example**
 
 ```javascript
