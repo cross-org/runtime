@@ -94,14 +94,14 @@ export function getCurrentProduct(): string {
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
-      if (userAgent.indexOf("Chrome") !== -1) {
-        return Product.Chrome;
-      } else if (userAgent.indexOf("Firefox") !== -1) {
-        return Product.Firefox;
-      } else if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
+      if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
         return Product.Safari;
       } else if (userAgent.indexOf("Edg") !== -1) {
         return Product.Edge;
+      } else if (userAgent.indexOf("Chrome") !== -1) {
+        return Product.Chrome;
+      } else if (userAgent.indexOf("Firefox") !== -1) {
+        return Product.Firefox;
       } else {
         return Product.Unsupported;
       }
