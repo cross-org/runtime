@@ -56,7 +56,7 @@ export const Product = {
  * @returns {Runtimes} The detected runtime environment.
  */
 export function getCurrentRuntime() {
-    //@ts-ignore Runtime detection
+  //@ts-ignore Runtime detection
   if (typeof Deno === "object") {
     return Runtime.Deno;
     //@ts-ignore Runtime detection
@@ -91,7 +91,8 @@ export function getCurrentProduct() {
       return Product.Node;
     case Runtime.Bun:
       return Product.Bun;
-    case Runtime.Browser: // For browser, get the specific browser
+    case Runtime.Browser: {
+      // For browser, get the specific browser
       const userAgent = navigator.userAgent;
       if (userAgent.indexOf("Chrome") !== -1) {
         return Product.Chrome;
@@ -104,6 +105,7 @@ export function getCurrentProduct() {
       } else {
         return Product.Unsupported;
       }
+    }
     default:
       return Product.Unsupported;
   }

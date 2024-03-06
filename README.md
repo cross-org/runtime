@@ -11,17 +11,19 @@ Refer to the installation instructions on the official JSR documentation: [inval
 **Usage Example**
 
 ```javascript
-import { CurrentRuntime, CurrentProduct, CurrentVersion } from '@cross/runtime';
+import { CurrentProduct, CurrentRuntime, CurrentVersion } from "@cross/runtime";
 
 console.log(`Runtime: ${CurrentRuntime}`);
-console.log(`Product: ${CurrentProduct}`); 
+console.log(`Product: ${CurrentProduct}`);
 console.log(`Version: ${CurrentVersion}`);
 ```
 
 **Full Documentation**
 
-For comprehensive documentation, including more advanced usage and examples, please visit the official JSR documentation (if your are not already there): [https://jsr.io/@cross/runtime](https://jsr.io/@cross/runtime).
+For comprehensive documentation, including more advanced usage and examples, please visit the official JSR documentation (if your are not already there):
+[https://jsr.io/@cross/runtime](https://jsr.io/@cross/runtime).
 
 **Why Choose @cross/runtime?**
 
-If you need reliable and flexible runtime detection across different JavaScript and TypeScript environments, `@cross/runtime` is an excellent choice. It's actively maintained, supports all environments, minimal and free from dependencies.
+If you need reliable and flexible runtime detection across different JavaScript and TypeScript environments, `@cross/runtime` is an excellent choice. It's actively maintained, supports all
+environments, minimal and free from dependencies.
