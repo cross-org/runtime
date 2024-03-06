@@ -2,6 +2,7 @@
 node_modules
 .npmrc
 test.js
+package.json
 package-lock.json
 
 # Deno

@@ -40,12 +40,6 @@ function getBraveVersion() {
   return match ? match[2] : "Unknown";
 }
 
-function getVivaldiVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Vivaldi\/([0-9]+)\./);
-  return match ? match[1] : "Unknown";
-}
-
 /**
  * Enum of supported Runtimes.
  * @enum {string}
@@ -55,6 +49,20 @@ export enum Runtime {
   Bun = "bun",
   Node = "node",
   Browser = "browser",
+  Unsupported = "unsupported",
+}
+
+/**
+ * Enum of supported Operating Systems.
+ * @enum {string}
+ */
+export enum OperatingSystem {
+  Windows = "windows",
+  macOS = "macos",
+  Linux = "linux",
+  Android = "android",
+  Unix = "unix",
+  iOS = "ios",
   Unsupported = "unsupported",
 }
 
@@ -75,9 +83,20 @@ export enum Product {
   Edge = "edge",
   Opera = "opera",
   Brave = "brave",
-  Vivaldi = "vivaldi",
 
   // And unsupported
+  Unsupported = "unsupported",
+}
+
+/**
+ * Enum of common CPU architectures.
+ * @enum {string}
+ */
+export enum Architecture {
+  x86 = "x86",
+  x64 = "x86_64",
+  arm = "arm",
+  arm64 = "arm64",
   Unsupported = "unsupported",
 }
 
@@ -108,6 +127,80 @@ export function getCurrentRuntime(): Runtime {
 }
 
 /**
+ * Dynamically determines the current operating system.
+ */
+export function getCurrentOS(): OperatingSystem {
+  const runtime = getCurrentRuntime();
+  switch (runtime) {
+    case Runtime.Deno:
+      switch (Deno.build.os) {
+        case "darwin":
+          return OperatingSystem.macOS;
+        case "windows":
+          return OperatingSystem.Windows;
+        case "linux":
+          return OperatingSystem.Linux;
+        case "android":
+          return OperatingSystem.Android;
+        case "aix":
+        case "freebsd":
+        case "illumos":
+        case "netbsd":
+        case "solaris":
+          return OperatingSystem.Unix;
+      }
+      return OperatingSystem.Unsupported;
+    case Runtime.Node:
+      // @ts-ignore Cross Runtime
+      switch (process.platform) {
+        case "darwin":
+          return OperatingSystem.macOS;
+        case "win32":
+          return OperatingSystem.Windows;
+        case "linux":
+          return OperatingSystem.Linux;
+        case "android":
+          return OperatingSystem.Android;
+        case "aix":
+        case "freebsd":
+        case "openbsd":
+        case "sunos":
+          return OperatingSystem.Unix;
+      }
+      return OperatingSystem.Unsupported;
+    case Runtime.Bun:
+      // @ts-ignore Cross Runtime
+      switch (process.platform) {
+        case "darwin":
+          return OperatingSystem.macOS;
+        case "win32":
+          return OperatingSystem.Windows;
+        case "linux":
+          return OperatingSystem.Linux;
+        case "android":
+          return OperatingSystem.Android;
+        case "aix":
+        case "freebsd":
+        case "openbsd":
+        case "sunos":
+          return OperatingSystem.Unix;
+      }
+      return OperatingSystem.Unsupported;
+    case Runtime.Browser: {
+      if ("userAgent" in navigator) {
+        const userAgent = navigator.userAgent;
+        if (userAgent.indexOf("Win") !== -1) return OperatingSystem.Windows;
+        if (userAgent.indexOf("like Mac") !== -1) return OperatingSystem.iOS;
+        if (userAgent.indexOf("Mac") !== -1) return OperatingSystem.macOS;
+        if (userAgent.indexOf("Android") !== -1) return OperatingSystem.Android;
+        if (userAgent.indexOf("X11") !== -1 || userAgent.indexOf("Linux") !== -1) return OperatingSystem.Linux;
+      }
+    }
+  }
+  return OperatingSystem.Unsupported;
+}
+
+/**
  * Dynamically determines the current browser and its version (if applicable).
  */
 export function getCurrentProduct(): Product {
@@ -126,8 +219,6 @@ export function getCurrentProduct(): Product {
         return Product.Opera;
       } else if ("brave" in navigator) {
         return Product.Brave;
-      } else if (userAgent.indexOf("Vivaldi") !== -1) {
-        return Product.Vivaldi;
       } else if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
         return Product.Safari;
       } else if (userAgent.indexOf("Edg") !== -1) {
@@ -173,11 +264,75 @@ export function getCurrentVersion(): string | undefined {
       return getOperaVersion();
     case Product.Brave:
       return getBraveVersion();
-    case Product.Vivaldi:
-      return getVivaldiVersion();
     default:
       return undefined;
   }
+}
+
+/**
+ * Attempts to determine the current CPU architecture of the runtime's environment.
+ */
+export function getCurrentArchitecture(): Architecture {
+  const runtime = getCurrentRuntime();
+  switch (runtime) {
+    case Runtime.Deno:
+      if (Deno.build.arch === "x86_64") {
+        return Architecture.x64;
+      }
+      if (Deno.build.arch === "aarch64") {
+        return Architecture.arm64;
+      }
+      if (Deno.build.os === "darwin") {
+        return Architecture.x64;
+      }
+      return Architecture.x86;
+    case Runtime.Bun:
+    case Runtime.Node:
+      // @ts-ignore Cross Runtime
+      switch (process.arch) {
+        case "arm":
+          return Architecture.arm;
+        case "arm64":
+          return Architecture.arm64;
+        case "ia32":
+          return Architecture.x86;
+        case "x64":
+          return Architecture.x64;
+        case "loong64":
+        case "mips":
+        case "mipsel":
+        case "ppc":
+        case "ppc64":
+        case "riscv64":
+        case "s390":
+        case "s390x":
+          return Architecture.Unsupported;
+      }
+      return Architecture.Unsupported;
+    case Runtime.Browser: {
+      const userAgent = navigator.userAgent;
+      // @ts-ignore Cross Runtime
+      const platform = navigator.platform;
+      // Clues for x86/x64
+      if (platform.indexOf("Win64") !== -1 || platform.indexOf("x64") !== -1) {
+        return Architecture.x64;
+      } else if (platform.indexOf("Win32") !== -1 || platform.indexOf("x86") !== -1) {
+        return Architecture.x86;
+      }
+      // Clues for ARM
+      if (userAgent.indexOf("arm64") !== -1) {
+        return Architecture.arm64;
+      } else if (userAgent.indexOf("arm") !== -1) {
+        return Architecture.arm;
+        // @ts-ignore Cross Runtime
+      } else if (platform.indexOf("iPhone") || platform.indexOf("iPad") || (userAgent.indexOf("Mac") !== -1 && "ontouchend" in document)) {
+        // Likely aarch64 on newer iOS devices and Apple Silicon Macs
+        return Architecture.arm64;
+      }
+      return Architecture.Unsupported;
+    }
+  }
+  return Architecture.Unsupported;
 }
 
 /**
@@ -194,3 +349,13 @@ export const CurrentProduct: Product = getCurrentProduct();
  * Static variable containing the current product/runtime version.
  */
 export const CurrentVersion: string | undefined = getCurrentVersion();
+
+/**
+ * Static variable containing the current operating system.
+ */
+export const CurrentOS: string | undefined = getCurrentOS();
+
+/**
+ * Static variable containing the current operating system.
+ */
+export const CurrentArchitecture: string | undefined = getCurrentArchitecture();
