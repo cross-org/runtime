@@ -47,7 +47,7 @@ function getVivaldiVersion() {
 }
 
 /**
- * Enum of supported Runtime.
+ * Enum of supported Runtimes.
  * @enum {string}
  */
 export enum Runtime {
@@ -59,7 +59,7 @@ export enum Runtime {
 }
 
 /**
- * Enum of supported Product.
+ * Enum of supported Products.
  * @enum {string}
  */
 export enum Product {
@@ -82,8 +82,7 @@ export enum Product {
 }
 
 /**
- * Dynamically returns the current runtime environment.
- * @returns {Runtimes} The detected runtime environment.
+ * Dynamically determines the current runtime environment.
  */
 export function getCurrentRuntime(): Runtime {
   //@ts-ignore Runtime detection
@@ -109,8 +108,7 @@ export function getCurrentRuntime(): Runtime {
 }
 
 /**
- * Determines the current browser and its version (if applicable).
- * @returns {Products}
+ * Dynamically determines the current browser and its version (if applicable).
  */
 export function getCurrentProduct(): Product {
   const runtime = getCurrentRuntime();
@@ -148,8 +146,8 @@ export function getCurrentProduct(): Product {
 }
 
 /**
- * Determines the version of the current product/runtime
- * @returns {string} An object containing the detected version, or undefined if the product is not supported.
+ * Dynamically determines the version of the current product/runtime
+ * @returns {string} A string containing the detected version, or undefined if the product is not supported.
  */
 export function getCurrentVersion(): string | undefined {
   const product = getCurrentProduct();
@@ -183,16 +181,16 @@ export function getCurrentVersion(): string | undefined {
 }
 
 /**
- * Static variable with the current runtime.
+ * Static variable containing the current runtime.
  */
 export const CurrentRuntime: Runtime = getCurrentRuntime();
 
 /**
- * Static variable with the current product.
+ * Static variable containing the current product.
  */
 export const CurrentProduct: Product = getCurrentProduct();
 
 /**
- * Static variable with the current product/runtime version.
+ * Static variable containing the current product/runtime version.
  */
 export const CurrentVersion: string | undefined = getCurrentVersion();
