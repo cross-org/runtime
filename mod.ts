@@ -36,8 +36,8 @@ function getOperaVersion() {
 
 function getBraveVersion() {
   const ua = navigator.userAgent;
-  const match = ua.match(/Brave\/([0-9]+)\./);
-  return match ? match[1] : "Unknown";
+  const match = ua.match(/Chrom(e|ium)\/([0-9]+)\./);
+  return match ? match[2] : "Unknown";
 }
 
 function getVivaldiVersion() {
@@ -126,10 +126,9 @@ export function getCurrentProduct(): Product {
       const userAgent = navigator.userAgent;
       if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) {
         return Product.Opera;
-      } else if (userAgent.indexOf("Brave") !== -1) {
+      } else if ("brave" in navigator) {
         return Product.Brave;
-      }
-      if (userAgent.indexOf("Vivaldi") !== -1) {
+      } else if (userAgent.indexOf("Vivaldi") !== -1) {
         return Product.Vivaldi;
       } else if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
         return Product.Safari;
