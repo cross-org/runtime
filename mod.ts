@@ -27,35 +27,65 @@ function getSafariVersion() {
   }
 }
 
+function getOperaVersion() {
+  const ua = navigator.userAgent;
+  // Look for either 'Opera/' or 'OPR/' followed by the version
+  const match = ua.match(/(Opera|OPR)\/([0-9]+)\./);
+  return match ? match[2] : "Unknown";
+}
+
+function getBraveVersion() {
+  const ua = navigator.userAgent;
+  const match = ua.match(/Brave\/([0-9]+)\./);
+  return match ? match[1] : "Unknown";
+}
+
+function getVivaldiVersion() {
+  const ua = navigator.userAgent;
+  const match = ua.match(/Vivaldi\/([0-9]+)\./);
+  return match ? match[1] : "Unknown";
+}
+
 /**
  * Enum of supported Runtime.
  * @enum {string}
  */
-export const Runtime = {
-  Deno: "deno",
-  Bun: "bun",
-  Node: "node",
-  Browser: "browser",
-  Unsupported: "unsupported",
-};
+export enum Runtime {
+  Deno = "deno",
+  Bun = "bun",
+  Node = "node",
+  Browser = "browser",
+  Unsupported = "unsupported",
+}
 
 /**
  * Enum of supported Product.
  * @enum {string}
  */
-export const Product = {
-  ...Runtime, // Including Unsupported
-  Firefox: "firefox",
-  Safari: "safari",
-  Chrome: "chrome",
-  Edge: "edge",
-};
+export enum Product {
+  // All runtimes
+  Deno = "deno",
+  Bun = "bun",
+  Node = "node",
+
+  // All browsers
+  Firefox = "firefox",
+  Safari = "safari",
+  Chrome = "chrome",
+  Edge = "edge",
+  Opera = "opera",
+  Brave = "brave",
+  Vivaldi = "vivaldi",
+
+  // And unsupported
+  Unsupported = "unsupported",
+}
 
 /**
  * Dynamically returns the current runtime environment.
  * @returns {Runtimes} The detected runtime environment.
  */
-export function getCurrentRuntime(): string {
+export function getCurrentRuntime(): Runtime {
   //@ts-ignore Runtime detection
   if (typeof Deno === "object") {
     return Runtime.Deno;
@@ -82,7 +112,7 @@ export function getCurrentRuntime(): string {
  * Determines the current browser and its version (if applicable).
  * @returns {Products}
  */
-export function getCurrentProduct(): string {
+export function getCurrentProduct(): Product {
   const runtime = getCurrentRuntime();
   switch (runtime) {
     case Runtime.Deno:
@@ -94,7 +124,14 @@ export function getCurrentProduct(): string {
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
-      if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
+      if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) {
+        return Product.Opera;
+      } else if (userAgent.indexOf("Brave") !== -1) {
+        return Product.Brave;
+      }
+      if (userAgent.indexOf("Vivaldi") !== -1) {
+        return Product.Vivaldi;
+      } else if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
         return Product.Safari;
       } else if (userAgent.indexOf("Edg") !== -1) {
         return Product.Edge;
@@ -135,6 +172,12 @@ export function getCurrentVersion(): string | undefined {
       return getEdgeVersion();
     case Product.Safari:
       return getSafariVersion();
+    case Product.Opera:
+      return getOperaVersion();
+    case Product.Brave:
+      return getBraveVersion();
+    case Product.Vivaldi:
+      return getVivaldiVersion();
     default:
       return undefined;
   }
@@ -143,12 +186,12 @@ export function getCurrentVersion(): string | undefined {
 /**
  * Static variable with the current runtime.
  */
-export const CurrentRuntime: string = getCurrentRuntime();
+export const CurrentRuntime: Runtime = getCurrentRuntime();
 
 /**
  * Static variable with the current product.
  */
-export const CurrentProduct: string = getCurrentProduct();
+export const CurrentProduct: Product = getCurrentProduct();
 
 /**
  * Static variable with the current product/runtime version.
