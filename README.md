@@ -11,11 +11,15 @@ Refer to the installation instructions on the official JSR documentation: [inval
 **Usage Example**
 
 ```javascript
-import { CurrentProduct, CurrentRuntime, CurrentVersion } from "@cross/runtime";
+import { CurrentProduct, CurrentRuntime, CurrentVersion, Runtime } from "@cross/runtime";
 
 console.log(`Runtime: ${CurrentRuntime}`);
 console.log(`Product: ${CurrentProduct}`);
 console.log(`Version: ${CurrentVersion}`);
+
+if (CurrentRuntime == Runtime.Deno) {
+    console.log("You're running Deno!");
+}
 ```
 
 **Full Documentation**
