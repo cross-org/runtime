@@ -313,13 +313,17 @@ export function getCurrentArchitecture(): Architecture {
       const userAgent = navigator.userAgent;
       // @ts-ignore Cross Runtime
       const platform = navigator.platform;
-      // Clues for x86/x64
-      if (platform.indexOf("Win64") !== -1 || platform.indexOf("x64") !== -1) {
+
+      if (platform.indexOf("Win64") !== -1 || platform.indexOf("x64") !== -1 || platform.indexOf("x86_64") !== -1) {
         return Architecture.x64;
-      } else if (platform.indexOf("Win32") !== -1 || platform.indexOf("x86") !== -1) {
+      } else if (platform.indexOf("Win32") !== -1 || (platform.indexOf("x86") !== -1 && platform.indexOf("x86_64") === -1)) {
+        return Architecture.x86;
+      } else if (userAgent.indexOf("Win64") !== -1 || userAgent.indexOf("x64") !== -1 || userAgent.indexOf("x86_64") !== -1) {
+        return Architecture.x64;
+      } else if (userAgent.indexOf("Win32") !== -1 || (userAgent.indexOf("x86") !== -1 && userAgent.indexOf("x86_64") === -1)) {
         return Architecture.x86;
       }
-      // Clues for ARM
+
       if (userAgent.indexOf("arm64") !== -1) {
         return Architecture.arm64;
       } else if (userAgent.indexOf("arm") !== -1) {
