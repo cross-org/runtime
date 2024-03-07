@@ -4,10 +4,17 @@
 
 This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection.
 
-Try it out at [jsfiddle.net/ux87tLz4/6/](https://jsfiddle.net/ux87tLz4/6/)
+Try it out at [https://jsfiddle.net/hexag0n/x9568nmy/](https://jsfiddle.net/hexag0n/x9568nmy/)
 
 ```javascript
-import { CurrentArchitecture, CurrentOS, CurrentProduct, CurrentRuntime, CurrentVersion, Runtime } from "@cross/runtime";
+import { 
+  CurrentArchitecture,
+  CurrentOS,
+  CurrentProduct,
+  CurrentRuntime,
+  CurrentVersion,
+  Runtime 
+} from "@cross/runtime";
 
 console.log(`Runtime: ${CurrentRuntime}`);
 console.log(`OS: ${CurrentOS}`);
@@ -34,7 +41,6 @@ Version:      1.0.30
 You're not running Deno!
 ```
 
-**Full Documentation**
+**Full Documentation and Installation Instructions**
 
-For comprehensive documentation, including more advanced usage and examples, please visit the official JSR documentation (if your are not already there):
-[https://jsr.io/@cross/runtime](https://jsr.io/@cross/runtime).
+For comprehensive documentation, including more advanced usage and examples, please visit the documentation at jsr.io (if your are not already there): [https://jsr.io/@cross/runtime](https://jsr.io/@cross/runtime).

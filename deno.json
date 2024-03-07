@@ -3,6 +3,7 @@
   "version": "0.0.15",
   "exports": "./mod.ts",
   "fmt": {
-    "lineWidth": 200
+    "lineWidth": 200,
+    "exclude": ["README.md"]
   }
 }
