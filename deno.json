@@ -6,5 +6,5 @@
     "lineWidth": 200,
     "exclude": ["README.md"]
   },
-  "imports": { "@cross/test": "jsr:@cross/test@^0.0.6", "@std/assert": "jsr:@std/assert@^0.219.1" }
+  "imports": { "@cross/test": "jsr:@cross/test@^0.0.7", "@std/assert": "jsr:@std/assert@^0.219.1" }
 }
