@@ -53,7 +53,6 @@ export enum Runtime {
   Netlify = "netlify",
   EdgeLight = "edgelight",
   Fastly = "fastly",
-  Lagon = "lagon",
   Unsupported = "unsupported",
 }
 
@@ -84,7 +83,6 @@ export enum Product {
   Netlify = "netlify",
   EdgeLight = "edgelight",
   Fastly = "fastly",
-  Lagon = "lagon",
 
   // All browsers
   Firefox = "firefox",
@@ -111,40 +109,41 @@ export enum Architecture {
 }
 
 /**
+ * Verifies if a property exists in the global namespace and optionally checks its type.
+ *
+ * @param {string} name - The name of the property to verify.
+ * @param {string} [typeString] - The expected type of the property (optional).
+ * @returns {boolean} True if the property exists and matches the type (if provided), False otherwise.
+ */
+function verifyGlobal(name: string, typeString?: string) {
+  return name in globalThis && (!typeString || typeof (globalThis as Record<string, unknown>)[name] === typeString);
+}
+
+/**
  * Dynamically determines the current runtime environment.
  */
 export function getCurrentRuntime(): Runtime {
-  //@ts-ignore Runtime detection
-  if (typeof Deno === "object") {
+  if (verifyGlobal("Deno", "object")) {
     return Runtime.Deno;
-    //@ts-ignore Runtime detection
-  } else if (typeof Bun === "object") {
+  } else if (verifyGlobal("Bun", "object")) {
     return Runtime.Bun;
-    //@ts-ignore Runtime detection
-  } else if (typeof Netlify === "object") {
+  } else if (verifyGlobal("Netlify", "object")) {
     return Runtime.Netlify;
-    //@ts-ignore Runtime detection
-  } else if (typeof EdgeRuntime === "string") {
+  } else if (verifyGlobal("EdgeRuntime", "string")) {
     return Runtime.EdgeLight;
-    //@ts-ignore Runtime detection
   } else if (globalThis.navigator?.userAgent === "Cloudflare-Workers") {
     return Runtime.Workerd;
-    //@ts-ignore Runtime detection
-  } else if (typeof fastly === "object") {
+  } else if (verifyGlobal("fastly", "object")) {
     return Runtime.Fastly;
-    //@ts-ignore Runtime detection
-  } else if (typeof __lagon__ === "object") {
-    return Runtime.Lagon;
   } else if (
-    //@ts-ignore Runtime detection
-    typeof process === "object" &&
+    verifyGlobal("process", "object") &&
     //@ts-ignore Runtime detection
     typeof process.versions !== "undefined" &&
     //@ts-ignore Runtime detection
     typeof process.versions.node !== "undefined"
   ) {
     return Runtime.Node;
-  } else if (typeof window === "object") { // Check for Browser
+  } else if (verifyGlobal("window", "object")) { // Check for Browser
     return Runtime.Browser;
   } else {
     return Runtime.Unsupported;
@@ -237,6 +236,14 @@ export function getCurrentProduct(): Product {
       return Product.Node;
     case Runtime.Bun:
       return Product.Bun;
+    case Runtime.Workerd:
+      return Product.Workerd;
+    case Runtime.Netlify:
+      return Product.Netlify;
+    case Runtime.EdgeLight:
+      return Product.EdgeLight;
+    case Runtime.Fastly:
+      return Product.Fastly;
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
