@@ -49,6 +49,10 @@ export enum Runtime {
   Bun = "bun",
   Node = "node",
   Browser = "browser",
+  Workerd = "workerd",
+  Netlify = "netlify",
+  EdgeLight = "edgelight",
+  Fastly = "fastly",
   Unsupported = "unsupported",
 }
 
@@ -75,6 +79,10 @@ export enum Product {
   Deno = "deno",
   Bun = "bun",
   Node = "node",
+  Workerd = "workerd",
+  Netlify = "netlify",
+  EdgeLight = "edgelight",
+  Fastly = "fastly",
 
   // All browsers
   Firefox = "firefox",
@@ -101,25 +109,41 @@ export enum Architecture {
 }
 
 /**
+ * Verifies if a property exists in the global namespace and optionally checks its type.
+ *
+ * @param {string} name - The name of the property to verify.
+ * @param {string} [typeString] - The expected type of the property (optional).
+ * @returns {boolean} True if the property exists and matches the type (if provided), False otherwise.
+ */
+function verifyGlobal(name: string, typeString?: string) {
+  return name in globalThis && (!typeString || typeof (globalThis as Record<string, unknown>)[name] === typeString);
+}
+
+/**
  * Dynamically determines the current runtime environment.
  */
 export function getCurrentRuntime(): Runtime {
-  //@ts-ignore Runtime detection
-  if (typeof Deno === "object") {
+  if (verifyGlobal("Deno", "object")) {
     return Runtime.Deno;
-    //@ts-ignore Runtime detection
-  } else if (typeof Bun === "object") {
+  } else if (verifyGlobal("Bun", "object")) {
     return Runtime.Bun;
+  } else if (verifyGlobal("Netlify", "object")) {
+    return Runtime.Netlify;
+  } else if (verifyGlobal("EdgeRuntime", "string")) {
+    return Runtime.EdgeLight;
+  } else if (globalThis.navigator?.userAgent === "Cloudflare-Workers") {
+    return Runtime.Workerd;
+  } else if (verifyGlobal("fastly", "object")) {
+    return Runtime.Fastly;
   } else if (
-    //@ts-ignore Runtime detection
-    typeof process === "object" &&
+    verifyGlobal("process", "object") &&
     //@ts-ignore Runtime detection
     typeof process.versions !== "undefined" &&
     //@ts-ignore Runtime detection
     typeof process.versions.node !== "undefined"
   ) {
     return Runtime.Node;
-  } else if (typeof window === "object") { // Check for Browser
+  } else if (verifyGlobal("window", "object")) { // Check for Browser
     return Runtime.Browser;
   } else {
     return Runtime.Unsupported;
@@ -212,6 +236,14 @@ export function getCurrentProduct(): Product {
       return Product.Node;
     case Runtime.Bun:
       return Product.Bun;
+    case Runtime.Workerd:
+      return Product.Workerd;
+    case Runtime.Netlify:
+      return Product.Netlify;
+    case Runtime.EdgeLight:
+      return Product.EdgeLight;
+    case Runtime.Fastly:
+      return Product.Fastly;
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
@@ -340,6 +372,56 @@ export function getCurrentArchitecture(): Architecture {
 }
 
 /**
+ * Represents a group of system information gathered by the library.
+ */
+interface SystemInfo {
+  runtime: Runtime;
+  product: Product;
+  version: string | undefined;
+  os: OperatingSystem | undefined;
+  architecture: Architecture | undefined;
+}
+
+/**
+ * Retrieves the current system information.
+ * @returns {SystemInfo} An object containing the system information.
+ */
+function getSystemInfoInternal(): SystemInfo {
+  const systemInfo: SystemInfo = {
+    runtime: CurrentRuntime,
+    product: CurrentProduct,
+    version: CurrentVersion,
+    os: CurrentOS,
+    architecture: CurrentArchitecture,
+  };
+  return systemInfo;
+}
+
+/**
+ * Logs current system information to the console.
+ *
+ * @param {boolean} [useTable=false] - If true, formats the output as a table.
+ */
+export function dumpSystemInfo(useTable = false): void {
+  const systemInfo: SystemInfo = getSystemInfoInternal();
+
+  if (useTable) {
+    console.table(systemInfo);
+  } else {
+    console.log(JSON.stringify(systemInfo, null, 2));
+  }
+}
+
+/**
+ * Gets the current system information as a formatted JSON string.
+ * @returns {string}
+ */
+export function getSystemInfo(): string {
+  const systemInfo: SystemInfo = getSystemInfoInternal();
+  return JSON.stringify(systemInfo);
+}
+
+/**
  * Static variable containing the current runtime.
  */
 export const CurrentRuntime: Runtime = getCurrentRuntime();
@@ -357,9 +439,9 @@ export const CurrentVersion: string | undefined = getCurrentVersion();
 /**
  * Static variable containing the current operating system.
  */
-export const CurrentOS: string | undefined = getCurrentOS();
+export const CurrentOS: OperatingSystem | undefined = getCurrentOS();
 
 /**
  * Static variable containing the current operating system.
  */
-export const CurrentArchitecture: string | undefined = getCurrentArchitecture();
+export const CurrentArchitecture: Architecture | undefined = getCurrentArchitecture();
