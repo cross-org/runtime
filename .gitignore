@@ -10,3 +10,7 @@ deno.lock
 
 # Generic
 test.js
+
+# Bun
+bun.lockb
+bunfig.toml

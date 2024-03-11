@@ -27,3 +27,9 @@ jobs:
 
       - name: Check types
         run: deno check mod.ts
+
+      - name: Install test dependencies
+        run: deno add @cross/test @std/assert
+
+      - name: Run tests
+        run: deno test

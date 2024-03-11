@@ -1,22 +1,47 @@
 import { CurrentOS, OperatingSystem } from "./mod.ts";
 import { CurrentProduct, CurrentRuntime, CurrentVersion, Product, Runtime } from "./mod.ts";
-import { assertEquals, assertNotEquals } from "jsr:@std/assert";
+import { assertEquals, assertNotEquals } from "@std/assert";
+import { test } from "@cross/test";
 
-Deno.test("Current runtime is Deno (string)", () => {
-  assertEquals("deno", CurrentRuntime);
+test("Current runtime is correct (string)", () => {
+  if ("Bun" in globalThis) {
+    assertEquals("bun", CurrentRuntime);
+  } else if ("Deno" in globalThis) {
+    assertEquals("deno", CurrentRuntime);
+  } else {
+    assertEquals("node", CurrentRuntime);
+  }
 });
-Deno.test("Current runtime is Deno (enum)", () => {
-  assertEquals(Runtime.Deno, CurrentRuntime);
+test("Current runtime is Deno (enum)", () => {
+  if ("Bun" in globalThis) {
+    assertEquals(Runtime.Bun, CurrentRuntime);
+  } else if ("Deno" in globalThis) {
+    assertEquals(Runtime.Deno, CurrentRuntime);
+  } else {
+    assertEquals(Runtime.Node, CurrentRuntime);
+  }
 });
-Deno.test("Current product is Deno (string)", () => {
-  assertEquals("deno", CurrentProduct);
+test("Current product is Deno (string)", () => {
+  if ("Bun" in globalThis) {
+    assertEquals("bun", CurrentProduct);
+  } else if ("Deno" in globalThis) {
+    assertEquals("deno", CurrentProduct);
+  } else {
+    assertEquals("node", CurrentProduct);
+  }
 });
-Deno.test("Current product is Deno (enum)", () => {
-  assertEquals(Product.Deno, CurrentProduct);
+test("Current product is Deno (enum)", () => {
+  if ("Bun" in globalThis) {
+    assertEquals(Product.Bun, CurrentProduct);
+  } else if ("Deno" in globalThis) {
+    assertEquals(Product.Deno, CurrentProduct);
+  } else {
+    assertEquals(Product.Node, CurrentProduct);
+  }
 });
-Deno.test("Current version contains a dot", () => {
+test("Current version contains a dot", () => {
   assertEquals(true, CurrentVersion?.includes("."));
 });
-Deno.test("Current operating system is supported", () => {
+test("Current operating system is supported", () => {
   assertNotEquals(OperatingSystem.Unsupported, CurrentOS);
 });
