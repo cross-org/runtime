@@ -49,6 +49,11 @@ export enum Runtime {
   Bun = "bun",
   Node = "node",
   Browser = "browser",
+  Workerd = "workerd",
+  Netlify = "netlify",
+  EdgeLight = "edgelight",
+  Fastly = "fastly",
+  Lagon = "lagon",
   Unsupported = "unsupported",
 }
 
@@ -75,6 +80,11 @@ export enum Product {
   Deno = "deno",
   Bun = "bun",
   Node = "node",
+  Workerd = "workerd",
+  Netlify = "netlify",
+  EdgeLight = "edgelight",
+  Fastly = "fastly",
+  Lagon = "lagon",
 
   // All browsers
   Firefox = "firefox",
@@ -110,6 +120,21 @@ export function getCurrentRuntime(): Runtime {
     //@ts-ignore Runtime detection
   } else if (typeof Bun === "object") {
     return Runtime.Bun;
+    //@ts-ignore Runtime detection
+  } else if (typeof Netlify === "object") {
+    return Runtime.Netlify;
+    //@ts-ignore Runtime detection
+  } else if (typeof EdgeRuntime === "string") {
+    return Runtime.EdgeLight;
+    //@ts-ignore Runtime detection
+  } else if (globalThis.navigator?.userAgent === "Cloudflare-Workers") {
+    return Runtime.Workerd;
+    //@ts-ignore Runtime detection
+  } else if (typeof fastly === "object") {
+    return Runtime.Fastly;
+    //@ts-ignore Runtime detection
+  } else if (typeof __lagon__ === "object") {
+    return Runtime.Lagon;
   } else if (
     //@ts-ignore Runtime detection
     typeof process === "object" &&
@@ -340,6 +365,56 @@ export function getCurrentArchitecture(): Architecture {
 }
 
 /**
+ * Represents a group of system information gathered by the library.
+ */
+interface SystemInfo {
+  runtime: Runtime;
+  product: Product;
+  version: string | undefined;
+  os: OperatingSystem | undefined;
+  architecture: Architecture | undefined;
+}
+
+/**
+ * Retrieves the current system information.
+ * @returns {SystemInfo} An object containing the system information.
+ */
+function getSystemInfoInternal(): SystemInfo {
+  const systemInfo: SystemInfo = {
+    runtime: CurrentRuntime,
+    product: CurrentProduct,
+    version: CurrentVersion,
+    os: CurrentOS,
+    architecture: CurrentArchitecture,
+  };
+  return systemInfo;
+}
+
+/**
+ * Logs current system information to the console.
+ *
+ * @param {boolean} [useTable=false] - If true, formats the output as a table.
+ */
+export function dumpSystemInfo(useTable = false): void {
+  const systemInfo: SystemInfo = getSystemInfoInternal();
+
+  if (useTable) {
+    console.table(systemInfo);
+  } else {
+    console.log(JSON.stringify(systemInfo, null, 2));
+  }
+}
+
+/**
+ * Gets the current system information as a formatted JSON string.
+ * @returns {string}
+ */
+export function getSystemInfo(): string {
+  const systemInfo: SystemInfo = getSystemInfoInternal();
+  return JSON.stringify(systemInfo);
+}
+
+/**
  * Static variable containing the current runtime.
  */
 export const CurrentRuntime: Runtime = getCurrentRuntime();
@@ -357,9 +432,9 @@ export const CurrentVersion: string | undefined = getCurrentVersion();
 /**
  * Static variable containing the current operating system.
  */
-export const CurrentOS: string | undefined = getCurrentOS();
+export const CurrentOS: OperatingSystem | undefined = getCurrentOS();
 
 /**
  * Static variable containing the current operating system.
  */
-export const CurrentArchitecture: string | undefined = getCurrentArchitecture();
+export const CurrentArchitecture: Architecture | undefined = getCurrentArchitecture();
