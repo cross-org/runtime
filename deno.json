@@ -1,10 +1,16 @@
 {
   "name": "@cross/runtime",
-  "version": "0.0.17",
+  "version": "1.0.0",
   "exports": "./mod.ts",
   "fmt": {
     "lineWidth": 200,
     "exclude": ["README.md"]
+  },
+  "publish": {
+    "exclude": [
+      ".github",
+      "mod.test.ts"
+    ]
   },
   "imports": { "@cross/test": "jsr:@cross/test@^0.0.7", "@std/assert": "jsr:@std/assert@^0.219.1" }
 }
