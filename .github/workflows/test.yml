@@ -1,0 +1,16 @@
+name: Tests
+
+on: 
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deno_ci:
+    uses: cross-org/workflows/.github/workflows/deno-ci.yml@main 
+  bun_ci:
+    uses: cross-org/workflows/.github/workflows/bun-ci.yml@main 
+  node_ci:
+    uses: cross-org/workflows/.github/workflows/node-ci.yml@main 
