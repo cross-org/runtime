@@ -1,4 +1,4 @@
-name: My Project's Testing CI
+name: CI Tests
 
 on: 
   push:
@@ -8,14 +8,14 @@ on:
 
 jobs:
   deno_ci:
-    uses: cross-org/workflows/deno-ci.yml@main
+    uses: cross-org/workflows/.github/workflows/deno-ci.yml@main
     with:
       entrypoint: mod.ts
   bun_ci:
-    uses: cross-org/workflows/bun-ci.yml@main
+    uses: cross-org/workflows/.github/workflows/bun-ci.yml@main
     with:
-      jsr_dependencies: @cross/test @std/assert
+      jsr_dependencies: "@cross/test @std/assert"
   node_ci:
-    uses: cross-org/workflows/node-ci.yml@main
+    uses: cross-org/workflows/.github/workflows/node-ci.yml@main
     with:
-      jsr_dependencies: @cross/test @std/assert
+      jsr_dependencies: "@cross/test @std/assert"
