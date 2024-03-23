@@ -6,7 +6,9 @@
 
 This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection.
 
-Try it out at [https://jsfiddle.net/hexag0n/x9568nmy/](https://jsfiddle.net/hexag0n/x9568nmy/)
+Try it out at [https://jsfiddle.net/hexag0n/x9568nmy/](https://jsfiddle.net/hexag0n/x9568nmy/).
+
+Part of the @cross suite - check out our growing collection of cross-runtime tools at [github.com/cross-org](https://github.com/cross-org).
 
 ```javascript
 import { 
