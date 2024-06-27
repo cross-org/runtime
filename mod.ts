@@ -20,11 +20,8 @@ function getEdgeVersion() {
 function getSafariVersion() {
   const ua = navigator.userAgent;
   const match = ua.match(/Version\/([0-9]+)\.([0-9]+)(\.[0-9]+)? Safari\//);
-  if (match) {
-    return `${match[1]}.${match[2]}`; // Could include 3rd part if present
-  } else {
-    return "Unknown";
-  }
+  if (match) return `${match[1]}.${match[2]}`; // Could include 3rd part if present
+  return "Unknown";
 }
 
 function getOperaVersion() {
@@ -123,19 +120,13 @@ function verifyGlobal(name: string, typeString?: string) {
  * Dynamically determines the current runtime environment.
  */
 export function getCurrentRuntime(): Runtime {
-  if (verifyGlobal("Deno", "object")) {
-    return Runtime.Deno;
-  } else if (verifyGlobal("Bun", "object")) {
-    return Runtime.Bun;
-  } else if (verifyGlobal("Netlify", "object")) {
-    return Runtime.Netlify;
-  } else if (verifyGlobal("EdgeRuntime", "string")) {
-    return Runtime.EdgeLight;
-  } else if (globalThis.navigator?.userAgent === "Cloudflare-Workers") {
-    return Runtime.Workerd;
-  } else if (verifyGlobal("fastly", "object")) {
-    return Runtime.Fastly;
-  } else if (
+  if (verifyGlobal("Deno", "object")) return Runtime.Deno;
+  if (verifyGlobal("Bun", "object")) return Runtime.Bun;
+  if (verifyGlobal("Netlify", "object")) return Runtime.Netlify;
+  if (verifyGlobal("EdgeRuntime", "string")) return Runtime.EdgeLight;
+  if (globalThis.navigator?.userAgent === "Cloudflare-Workers") return Runtime.Workerd;
+  if (verifyGlobal("fastly", "object")) return Runtime.Fastly;
+  if (
     verifyGlobal("process", "object") &&
     //@ts-ignore Runtime detection
     typeof process.versions !== "undefined" &&
@@ -143,11 +134,11 @@ export function getCurrentRuntime(): Runtime {
     typeof process.versions.node !== "undefined"
   ) {
     return Runtime.Node;
-  } else if (verifyGlobal("window", "object")) { // Check for Browser
-    return Runtime.Browser;
-  } else {
-    return Runtime.Unsupported;
   }
+  if (verifyGlobal("window", "object")) { // Check for Browser
+    return Runtime.Browser;
+  }
+  return Runtime.Unsupported;
 }
 
 /**
@@ -247,21 +238,13 @@ export function getCurrentProduct(): Product {
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
-      if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) {
-        return Product.Opera;
-      } else if ("brave" in navigator) {
-        return Product.Brave;
-      } else if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) {
-        return Product.Safari;
-      } else if (userAgent.indexOf("Edg") !== -1) {
-        return Product.Edge;
-      } else if (userAgent.indexOf("Chrome") !== -1) {
-        return Product.Chrome;
-      } else if (userAgent.indexOf("Firefox") !== -1) {
-        return Product.Firefox;
-      } else {
-        return Product.Unsupported;
-      }
+      if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) return Product.Opera;
+      if ("brave" in navigator) return Product.Brave;
+      if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) return Product.Safari;
+      if (userAgent.indexOf("Edg") !== -1) return Product.Edge;
+      if (userAgent.indexOf("Chrome") !== -1) return Product.Chrome;
+      if (userAgent.indexOf("Firefox") !== -1) return Product.Firefox;
+      return Product.Unsupported;
     }
     default:
       return Product.Unsupported;
@@ -308,15 +291,9 @@ export function getCurrentArchitecture(): Architecture {
   const runtime = getCurrentRuntime();
   switch (runtime) {
     case Runtime.Deno:
-      if (Deno.build.arch === "x86_64") {
-        return Architecture.x64;
-      }
-      if (Deno.build.arch === "aarch64") {
-        return Architecture.arm64;
-      }
-      if (Deno.build.os === "darwin") {
-        return Architecture.x64;
-      }
+      if (Deno.build.arch === "x86_64") return Architecture.x64;
+      if (Deno.build.arch === "aarch64") return Architecture.arm64;
+      if (Deno.build.os === "darwin") return Architecture.x64;
       return Architecture.x86;
     case Runtime.Bun:
     case Runtime.Node:
@@ -346,22 +323,17 @@ export function getCurrentArchitecture(): Architecture {
       // @ts-ignore Cross Runtime
       const platform = navigator.platform;
 
-      if (platform.indexOf("Win64") !== -1 || platform.indexOf("x64") !== -1 || platform.indexOf("x86_64") !== -1) {
-        return Architecture.x64;
-      } else if (platform.indexOf("Win32") !== -1 || (platform.indexOf("x86") !== -1 && platform.indexOf("x86_64") === -1)) {
-        return Architecture.x86;
-      } else if (userAgent.indexOf("Win64") !== -1 || userAgent.indexOf("x64") !== -1 || userAgent.indexOf("x86_64") !== -1) {
-        return Architecture.x64;
-      } else if (userAgent.indexOf("Win32") !== -1 || (userAgent.indexOf("x86") !== -1 && userAgent.indexOf("x86_64") === -1)) {
-        return Architecture.x86;
-      }
+      if (platform.indexOf("Win64") !== -1 || platform.indexOf("x64") !== -1 || platform.indexOf("x86_64") !== -1) return Architecture.x64;
+      if (platform.indexOf("Win32") !== -1 || (platform.indexOf("x86") !== -1 && platform.indexOf("x86_64") === -1)) return Architecture.x86;
+      if (userAgent.indexOf("Win64") !== -1 || userAgent.indexOf("x64") !== -1 || userAgent.indexOf("x86_64") !== -1) return Architecture.x64;
+      if (userAgent.indexOf("Win32") !== -1 || (userAgent.indexOf("x86") !== -1 && userAgent.indexOf("x86_64") === -1)) return Architecture.x86;
 
-      if (userAgent.indexOf("arm64") !== -1) {
-        return Architecture.arm64;
-      } else if (userAgent.indexOf("arm") !== -1) {
+      if (userAgent.indexOf("arm64") !== -1) return Architecture.arm64;
+      if (userAgent.indexOf("arm") !== -1) {
         return Architecture.arm;
         // @ts-ignore Cross Runtime
-      } else if (platform.indexOf("iPhone") || platform.indexOf("iPad") || (userAgent.indexOf("Mac") !== -1 && "ontouchend" in document)) {
+      }
+      if (platform.indexOf("iPhone") || platform.indexOf("iPad") || (userAgent.indexOf("Mac") !== -1 && "ontouchend" in document)) {
         // Likely aarch64 on newer iOS devices and Apple Silicon Macs
         return Architecture.arm64;
       }
