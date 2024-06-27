@@ -331,8 +331,8 @@ export function getCurrentArchitecture(): Architecture {
       if (userAgent.indexOf("arm64") !== -1) return Architecture.arm64;
       if (userAgent.indexOf("arm") !== -1) {
         return Architecture.arm;
-        // @ts-ignore Cross Runtime
       }
+      // @ts-ignore Cross Runtime
       if (platform.indexOf("iPhone") || platform.indexOf("iPad") || (userAgent.indexOf("Mac") !== -1 && "ontouchend" in document)) {
         // Likely aarch64 on newer iOS devices and Apple Silicon Macs
         return Architecture.arm64;
