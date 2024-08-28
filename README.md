@@ -4,7 +4,7 @@
 
 **Cross-Runtime Environment Detection for JavaScript and TypeScript**
 
-This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection.
+This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection. Since version `1.1.0`, it can also parse a User Agent string to extract OS, Product and Version in a reliable way.
 
 Try it out at [https://jsfiddle.net/hexag0n/x9568nmy/](https://jsfiddle.net/hexag0n/x9568nmy/).
 
@@ -17,7 +17,7 @@ import {
   CurrentProduct,
   CurrentRuntime,
   CurrentVersion,
-  Runtime 
+  Runtime
 } from "@cross/runtime";
 
 console.log(`Runtime: ${CurrentRuntime}`);
@@ -43,6 +43,34 @@ Product:      bun
 Version:      1.0.30
 
 You're not running Deno!
+```
+
+... and an example of parsing User Agent String:
+
+```javascript
+import { 
+  getVersionFromUserAgent,
+  getProductFromUserAgent,
+  getOSFromUserAgent
+} from "@cross/runtime";
+
+const ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36";
+
+const os = getVersionFromUserAgent(ua);
+const product = getProductFromUserAgent(ua);
+const version = getOSFromUserAgent(ua);
+
+console.log(`OS: ${os}`);
+console.log(`Product: ${product}`);
+console.log(`Version: ${version}\n`);
+```
+
+Resulting in:
+
+```
+OS: windows
+Product: chrome
+Version: 128
 ```
 
 ### Documentation

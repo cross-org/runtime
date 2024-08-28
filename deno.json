@@ -1,6 +1,6 @@
 {
   "name": "@cross/runtime",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "exports": "./mod.ts",
   "fmt": {
     "lineWidth": 200,
@@ -12,5 +12,5 @@
       "mod.test.ts"
     ]
   },
-  "imports": { "@cross/test": "jsr:@cross/test@^0.0.7", "@std/assert": "jsr:@std/assert@^0.219.1" }
+  "imports": { "@cross/test": "jsr:@cross/test@~0.0.9", "@std/assert": "jsr:@std/assert@~1.0.3" }
 }

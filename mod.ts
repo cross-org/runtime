@@ -1,39 +1,33 @@
 /* Private functions */
-function getChromeVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Chrom(e|ium)\/([0-9]+)\./);
+function getChromeVersion(userAgent: string) {
+  const match = userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
   return match ? match[2] : "Unknown";
 }
 
-function getFirefoxVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Firefox\/([0-9]+)\./);
+function getFirefoxVersion(userAgent: string) {
+  const match = userAgent.match(/Firefox\/([0-9]+)\./);
   return match ? match[1] : "Unknown";
 }
 
-function getEdgeVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Edg\/([0-9]+)\./);
+function getEdgeVersion(userAgent: string) {
+  const match = userAgent.match(/Edg\/([0-9]+)\./);
   return match ? match[1] : "Unknown";
 }
 
-function getSafariVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Version\/([0-9]+)\.([0-9]+)(\.[0-9]+)? Safari\//);
+function getSafariVersion(userAgent: string) {
+  const match = userAgent.match(/Version\/([0-9]+)\.([0-9]+)(\.[0-9]+)? Safari\//);
   if (match) return `${match[1]}.${match[2]}`; // Could include 3rd part if present
   return "Unknown";
 }
 
-function getOperaVersion() {
-  const ua = navigator.userAgent;
+function getOperaVersion(userAgent: string) {
   // Look for either 'Opera/' or 'OPR/' followed by the version
-  const match = ua.match(/(Opera|OPR)\/([0-9]+)\./);
+  const match = userAgent.match(/(Opera|OPR)\/([0-9]+)\./);
   return match ? match[2] : "Unknown";
 }
 
-function getBraveVersion() {
-  const ua = navigator.userAgent;
-  const match = ua.match(/Chrom(e|ium)\/([0-9]+)\./);
+function getBraveVersion(userAgent: string) {
+  const match = userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
   return match ? match[2] : "Unknown";
 }
 
@@ -204,14 +198,22 @@ export function getCurrentOS(): OperatingSystem {
     case Runtime.Browser: {
       if ("userAgent" in navigator) {
         const userAgent = navigator.userAgent;
-        if (userAgent.indexOf("Win") !== -1) return OperatingSystem.Windows;
-        if (userAgent.indexOf("like Mac") !== -1) return OperatingSystem.iOS;
-        if (userAgent.indexOf("Mac") !== -1) return OperatingSystem.macOS;
-        if (userAgent.indexOf("Android") !== -1) return OperatingSystem.Android;
-        if (userAgent.indexOf("X11") !== -1 || userAgent.indexOf("Linux") !== -1) return OperatingSystem.Linux;
+        return getOSFromUserAgent(userAgent);
       }
     }
   }
+  return OperatingSystem.Unsupported;
+}
+
+/**
+ * Determine operating system from user agent string, if possible
+ */
+export function getOSFromUserAgent(userAgent: string): OperatingSystem {
+  if (userAgent.indexOf("Win") !== -1) return OperatingSystem.Windows;
+  if (userAgent.indexOf("like Mac") !== -1) return OperatingSystem.iOS;
+  if (userAgent.indexOf("Mac") !== -1) return OperatingSystem.macOS;
+  if (userAgent.indexOf("Android") !== -1) return OperatingSystem.Android;
+  if (userAgent.indexOf("X11") !== -1 || userAgent.indexOf("Linux") !== -1) return OperatingSystem.Linux;
   return OperatingSystem.Unsupported;
 }
 
@@ -238,17 +240,24 @@ export function getCurrentProduct(): Product {
     case Runtime.Browser: {
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
-      if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) return Product.Opera;
-      if ("brave" in navigator) return Product.Brave;
-      if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) return Product.Safari;
-      if (userAgent.indexOf("Edg") !== -1) return Product.Edge;
-      if (userAgent.indexOf("Chrome") !== -1) return Product.Chrome;
-      if (userAgent.indexOf("Firefox") !== -1) return Product.Firefox;
-      return Product.Unsupported;
+      return getProductFromUserAgent(userAgent);
     }
     default:
       return Product.Unsupported;
   }
+}
+
+/**
+ * Determines the product from a user agent string, if possible
+ */
+export function getProductFromUserAgent(userAgent: string): Product {
+  if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) return Product.Opera;
+  if ("brave" in navigator) return Product.Brave;
+  if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) return Product.Safari;
+  if (userAgent.indexOf("Edg") !== -1) return Product.Edge;
+  if (userAgent.indexOf("Chrome") !== -1) return Product.Chrome;
+  if (userAgent.indexOf("Firefox") !== -1) return Product.Firefox;
+  return Product.Unsupported;
 }
 
 /**
@@ -267,18 +276,30 @@ export function getCurrentVersion(): string | undefined {
     case Product.Bun:
       // @ts-ignore Runtime detection
       return process.versions.bun;
+    default:
+      const userAgent = globalThis.navigator?.userAgent;
+      return getVersionFromUserAgent(userAgent);
+  }
+}
+
+/**
+ * Determines the product version from a user agent string, if possible
+ */
+export function getVersionFromUserAgent(userAgent: string): string | undefined {
+  const product = getProductFromUserAgent(userAgent);
+  switch (product) {
     case Product.Chrome:
-      return getChromeVersion();
+      return getChromeVersion(userAgent);
     case Product.Firefox:
-      return getFirefoxVersion();
+      return getFirefoxVersion(userAgent);
     case Product.Edge:
-      return getEdgeVersion();
+      return getEdgeVersion(userAgent);
     case Product.Safari:
-      return getSafariVersion();
+      return getSafariVersion(userAgent);
     case Product.Opera:
-      return getOperaVersion();
+      return getOperaVersion(userAgent);
     case Product.Brave:
-      return getBraveVersion();
+      return getBraveVersion(userAgent);
     default:
       return undefined;
   }
