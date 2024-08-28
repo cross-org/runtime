@@ -238,6 +238,8 @@ export function getCurrentProduct(): Product {
     case Runtime.Fastly:
       return Product.Fastly;
     case Runtime.Browser: {
+      // Brave can not be detected from user agent string, handle separately
+      if (verifyGlobal("brave") && "brave" in navigator) return Product.Brave;
       // For browser, get the specific browser
       const userAgent = navigator.userAgent;
       return getProductFromUserAgent(userAgent);
@@ -252,7 +254,6 @@ export function getCurrentProduct(): Product {
  */
 export function getProductFromUserAgent(userAgent: string): Product {
   if (userAgent.indexOf("Opera") !== -1 || userAgent.indexOf("OPR") !== -1) return Product.Opera;
-  if ("brave" in navigator) return Product.Brave;
   if (userAgent.indexOf("Safari") !== -1 && userAgent.indexOf("Chrome") === -1) return Product.Safari;
   if (userAgent.indexOf("Edg") !== -1) return Product.Edge;
   if (userAgent.indexOf("Chrome") !== -1) return Product.Chrome;
