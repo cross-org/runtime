@@ -276,9 +276,10 @@ export function getCurrentVersion(): string | undefined {
     case Product.Bun:
       // @ts-ignore Runtime detection
       return process.versions.bun;
-    default:
+    default: {
       const userAgent = globalThis.navigator?.userAgent;
       return getVersionFromUserAgent(userAgent);
+    }
   }
 }
 

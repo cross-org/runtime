@@ -6,6 +6,11 @@
     "lineWidth": 200,
     "exclude": ["README.md"]
   },
+  "lint": {
+    "rules": {
+      "exclude": ["no-node-globals"]
+    }
+  },
   "publish": {
     "exclude": [
       ".github",
