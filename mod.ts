@@ -15,8 +15,8 @@ function getEdgeVersion(userAgent: string) {
 }
 
 function getSafariVersion(userAgent: string) {
-  const match = userAgent.match(/Version\/([0-9]+)\.([0-9]+)(\.[0-9]+)? Safari\//);
-  if (match) return `${match[1]}.${match[2]}`; // Could include 3rd part if present
+  const match = userAgent.match(/Version\/([0-9]+)\.([0-9]+)(\.[0-9]+)?/);
+  if (match) return `${match[1]}.${match[2]}`;
   return "Unknown";
 }
 
