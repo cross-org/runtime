@@ -4,7 +4,7 @@
 
 **Cross-Runtime Environment Detection for JavaScript and TypeScript**
 
-This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, or browser) along with detailed browser detection. Since version `1.1.0`, it can also parse a User Agent string to extract OS, Product and Version in a reliable way.
+This package provides a well defined, cross runtime, way to determine details about the current runtime environment (Deno, Bun, Node.js, Tauri, or browser) along with detailed browser detection. Since version `1.1.0`, it can also parse a User Agent string to extract OS, Product and Version in a reliable way.
 
 Try it out at [https://jsfiddle.net/hexag0n/x9568nmy/](https://jsfiddle.net/hexag0n/x9568nmy/).
 
@@ -91,6 +91,7 @@ bunx jsr add @cross/runtime # Bun
 * Deno
 * Bun
 * Node.js
+* Tauri
 * Web browsers (Chrome, Firefox, Edge, Safari, Opera, Brave)
 * Edge Functions (Cloudflare Workers, Netlify Edge Functions, Fastly Compute@Edge)
 
@@ -115,3 +116,5 @@ bunx jsr add @cross/runtime # Bun
 **Important Notes:**
 
 * **Additional Functionality:** Beyond detection, the `dumpSystemInfo` function logs the information, and the `getsystemInfo` function provides a JSON representation.
+* **Tauri Detection:** Tauri applications are detected by the presence of the `__TAURI__` global object. Since Tauri runs in a webview, it uses the same OS and architecture detection logic as browsers.
+* **Tauri detailed Information:** For detailed Tauri-specific information (app name, version, identifier, Tauri framework version), use the `getTauriInfo()` function. This requires the `@tauri-apps/api` dependency to be installed in your Tauri project.
