@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-process-global
 /* Private functions */
 function getChromeVersion(userAgent: string) {
   const match = userAgent.match(/Chrom(e|ium)\/([0-9]+)\./);
