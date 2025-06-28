@@ -108,3 +108,7 @@ test("MacOS is detected from older Safari user agent", () => {
 test("Version is detected from Safari user agent", () => {
   assertEquals(getVersionFromUserAgent(UserAgentStrings.safari5OnIos), "5.1");
 });
+test("Tauri detection works correctly", () => {
+  // For now we're just checking that we're not in Tauri (we're not running in a Tauri app)
+  assertNotEquals(CurrentRuntime, Runtime.Tauri);
+});

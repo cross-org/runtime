@@ -40,6 +40,7 @@ export enum Runtime {
   Bun = "bun",
   Node = "node",
   Browser = "browser",
+  Tauri = "tauri",
   Workerd = "workerd",
   Netlify = "netlify",
   EdgeLight = "edgelight",
@@ -70,6 +71,7 @@ export enum Product {
   Deno = "deno",
   Bun = "bun",
   Node = "node",
+  Tauri = "tauri",
   Workerd = "workerd",
   Netlify = "netlify",
   EdgeLight = "edgelight",
@@ -100,6 +102,16 @@ export enum Architecture {
 }
 
 /**
+ * Interface for Tauri-specific information.
+ */
+export interface TauriInfo {
+  version?: string;
+  name?: string;
+  identifier?: string;
+  tauriVersion?: string;
+}
+
+/**
  * Verifies if a property exists in the global namespace and optionally checks its type.
  *
  * @param {string} name - The name of the property to verify.
@@ -108,6 +120,32 @@ export enum Architecture {
  */
 function verifyGlobal(name: string, typeString?: string) {
   return name in globalThis && (!typeString || typeof (globalThis as Record<string, unknown>)[name] === typeString);
+}
+
+/**
+ * Gets Tauri-specific information asynchronously.
+ * Only works when running in a Tauri application.
+ * @returns {Promise<TauriInfo>} Tauri-specific data
+ */
+export async function getTauriInfo(): Promise<TauriInfo> {
+  if (getCurrentRuntime() !== Runtime.Tauri) {
+    return {};
+  }
+
+  try {
+    const { getVersion, getName, getIdentifier, getTauriVersion } = await import("@tauri-apps/api/app");
+
+    const [version, name, identifier, tauriVersion] = await Promise.all([
+      getVersion().catch(() => undefined),
+      getName().catch(() => undefined),
+      getIdentifier().catch(() => undefined),
+      getTauriVersion().catch(() => undefined),
+    ]);
+
+    return { version, name, identifier, tauriVersion };
+  } catch (_e) {
+    return {};
+  }
 }
 
 /**
@@ -129,7 +167,9 @@ export function getCurrentRuntime(): Runtime {
   ) {
     return Runtime.Node;
   }
-  if (verifyGlobal("window", "object")) { // Check for Browser
+  if (verifyGlobal("window", "object")) { // Check for Browser or Tauri
+    // Check for Tauri first (Tauri runs in a webview, so it has window)
+    if (verifyGlobal("__TAURI__", "object")) return Runtime.Tauri;
     return Runtime.Browser;
   }
   return Runtime.Unsupported;
@@ -195,6 +235,7 @@ export function getCurrentOS(): OperatingSystem {
           return OperatingSystem.Unix;
       }
       return OperatingSystem.Unsupported;
+    case Runtime.Tauri:
     case Runtime.Browser: {
       if ("userAgent" in navigator) {
         const userAgent = navigator.userAgent;
@@ -229,6 +270,8 @@ export function getCurrentProduct(): Product {
       return Product.Node;
     case Runtime.Bun:
       return Product.Bun;
+    case Runtime.Tauri:
+      return Product.Tauri;
     case Runtime.Workerd:
       return Product.Workerd;
     case Runtime.Netlify:
@@ -277,6 +320,7 @@ export function getCurrentVersion(): string | undefined {
     case Product.Bun:
       // @ts-ignore Runtime detection
       return process.versions.bun;
+    case Product.Tauri: //Fallthrough to default handling.
     default: {
       const userAgent = globalThis.navigator?.userAgent;
       return getVersionFromUserAgent(userAgent);
@@ -341,6 +385,7 @@ export function getCurrentArchitecture(): Architecture {
           return Architecture.Unsupported;
       }
       return Architecture.Unsupported;
+    case Runtime.Tauri:
     case Runtime.Browser: {
       const userAgent = navigator.userAgent;
       // @ts-ignore Cross Runtime
