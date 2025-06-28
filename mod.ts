@@ -105,9 +105,13 @@ export enum Architecture {
  * Interface for Tauri-specific information.
  */
 export interface TauriInfo {
+  /** The application version, as defined in `tauri.conf.json`. */
   version?: string;
+  /** The application name, as defined in `tauri.conf.json`. */
   name?: string;
+  /** The application's bundle identifier, as defined in `tauri.conf.json`. */
   identifier?: string;
+  /** The version of the underlying Tauri runtime. */
   tauriVersion?: string;
 }
 
