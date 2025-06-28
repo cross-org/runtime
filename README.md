@@ -117,4 +117,3 @@ bunx jsr add @cross/runtime # Bun
 
 * **Additional Functionality:** Beyond detection, the `dumpSystemInfo` function logs the information, and the `getsystemInfo` function provides a JSON representation.
 * **Tauri Detection:** Tauri applications are detected by the presence of the `__TAURI__` global object. Since Tauri runs in a webview, it uses the same OS and architecture detection logic as browsers.
-* **Tauri detailed Information:** For detailed Tauri-specific information (app name, version, identifier, Tauri framework version), use the `getTauriInfo()` function. This requires the `@tauri-apps/api` dependency to be installed in your Tauri project.

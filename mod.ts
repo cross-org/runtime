@@ -102,19 +102,19 @@ export enum Architecture {
   Unsupported = "unsupported",
 }
 
-/**
- * Interface for Tauri-specific information.
- */
-export interface TauriInfo {
-  /** The application version, as defined in `tauri.conf.json`. */
-  version?: string;
-  /** The application name, as defined in `tauri.conf.json`. */
-  name?: string;
-  /** The application's bundle identifier, as defined in `tauri.conf.json`. */
-  identifier?: string;
-  /** The version of the underlying Tauri runtime. */
-  tauriVersion?: string;
-}
+///**
+// * Interface for Tauri-specific information.
+// */
+//export interface TauriInfo {
+//  /** The application version, as defined in `tauri.conf.json`. */
+//  version?: string;
+//  /** The application name, as defined in `tauri.conf.json`. */
+//  name?: string;
+//  /** The application's bundle identifier, as defined in `tauri.conf.json`. */
+//  identifier?: string;
+//  /** The version of the underlying Tauri runtime. */
+//  tauriVersion?: string;
+//}
 
 /**
  * Verifies if a property exists in the global namespace and optionally checks its type.
@@ -127,31 +127,32 @@ function verifyGlobal(name: string, typeString?: string) {
   return name in globalThis && (!typeString || typeof (globalThis as Record<string, unknown>)[name] === typeString);
 }
 
-/**
- * Gets Tauri-specific information asynchronously.
- * Only works when running in a Tauri application.
- * @returns {Promise<TauriInfo>} Tauri-specific data
- */
-export async function getTauriInfo(): Promise<TauriInfo> {
-  if (getCurrentRuntime() !== Runtime.Tauri) {
-    return {};
-  }
-
-  try {
-    const { getVersion, getName, getIdentifier, getTauriVersion } = await import("@tauri-apps/api/app");
-
-    const [version, name, identifier, tauriVersion] = await Promise.all([
-      getVersion().catch(() => undefined),
-      getName().catch(() => undefined),
-      getIdentifier().catch(() => undefined),
-      getTauriVersion().catch(() => undefined),
-    ]);
-
-    return { version, name, identifier, tauriVersion };
-  } catch (_e) {
-    return {};
-  }
-}
+// Disable getTauriInfo() while I figure some things out.
+///**
+// * Gets Tauri-specific information asynchronously.
+// * Only works when running in a Tauri application.
+// * @returns {Promise<TauriInfo>} Tauri-specific data
+// */
+//export async function getTauriInfo(): Promise<TauriInfo> {
+//  if (getCurrentRuntime() !== Runtime.Tauri) {
+//    return {};
+//  }
+//
+//  try {
+//    const { getVersion, getName, getIdentifier, getTauriVersion } = await import("@tauri-apps/api/app");
+//
+//    const [version, name, identifier, tauriVersion] = await Promise.all([
+//      getVersion().catch(() => undefined),
+//      getName().catch(() => undefined),
+//      getIdentifier().catch(() => undefined),
+//      getTauriVersion().catch(() => undefined),
+//    ]);
+//
+//    return { version, name, identifier, tauriVersion };
+//  } catch (_e) {
+//    return {};
+//  }
+//}
 
 /**
  * Dynamically determines the current runtime environment.
